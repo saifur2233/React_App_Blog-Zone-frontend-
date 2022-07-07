@@ -10,7 +10,7 @@ const signup = () => {
     width: '100%',
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
-    height:'100vh',
+    height:'120vh',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
@@ -54,9 +54,9 @@ const signup = () => {
     <Form.Control type="password" placeholder="Confirm Password" />
   </Form.Group>
   
-  <Button variant="primary" type="submit">
-    Submit
-  </Button>
+  <div className="d-grid gap-2">
+  <Button variant="outline-primary" size="md" type="submit">Submit</Button>{' '}
+  </div>
 </Form>
   </Card.Body>
   <Card.Footer style={footerStyle}>

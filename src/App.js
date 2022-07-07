@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './components/Navbar/navbar'
 import Home from './components/Home/home'
-import Contact from './components/Test/contact'
+import Contact from './components/Contact/contact'
 import Error from './components/Error/error'
 import About from './components/About/about'
 import AllBlogs from './components/Blogs/allBlogs'

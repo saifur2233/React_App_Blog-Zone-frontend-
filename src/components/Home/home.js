@@ -1,6 +1,7 @@
-import Button from 'react-bootstrap/Carousel'
+import Button from 'react-bootstrap/Button'
 import React, {useState} from 'react'
 import Carousel from 'react-bootstrap/Carousel'
+import * as Icon from 'react-bootstrap-icons';
 import carouselImg1 from '../../assets/images/bg1.jpeg'
 import carouselImg2 from '../../assets/images/bg2.jpeg'
 import carouselImg3 from '../../assets/images/bg3.jpeg'
@@ -24,6 +25,9 @@ const ControlledCarousel = () => {
         <Carousel.Caption>
           <h3>First slide label</h3>
           <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+          <p>
+          <Button>View Blogs <Icon.ArrowRight color="white" size={15} /></Button>
+          </p>
         </Carousel.Caption>
         
       </Carousel.Item>

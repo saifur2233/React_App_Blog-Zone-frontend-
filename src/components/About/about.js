@@ -7,11 +7,11 @@ const about = () => {
     <div>
         <Container>
             <div className='row'>
-                <div className='col-md-6 p-5'>
+                <div className='col-md-5 p-5'>
                     <img className="w-100" src={aboutImg} alt='aboutimage' width='300px' height='400px'></img>
                 </div>
-                <div className='col-md-6 p-5'>
-                    <h1>Convinced yet? Let's make something great together.</h1>
+                <div className='col-md-7 p-5'>
+                    <h1 style={{color:'royalblue'}}>Convinced yet? Let's make something great together.</h1>
                     <div className='row mt-4'>
                         <div className='col-md-2'>
                         <Icon.GeoAlt color="royalblue" size={25} />
