@@ -26,6 +26,7 @@ const allBlogs = () => {
         setIsLoding(false);
       });
   };
+
   useEffect(() => {
     getAllUsers();
   }, []);
