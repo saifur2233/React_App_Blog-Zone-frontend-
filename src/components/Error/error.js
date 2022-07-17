@@ -1,11 +1,21 @@
-import React from 'react'
-
+import React from 'react';
+import backgroundImg from '../../assets/images/error/404.jpeg';
 const error = () => {
-  return (
-    <div>
-        <h1>404 page not found</h1>
-    </div>
-  )
-}
+  const myStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '15px',
+  };
 
-export default error
+  return (
+    <div style={myStyle}>
+      <div style={{ textAlign: 'center' }}>
+        <img src={backgroundImg} width="600px" height="400px" alt=""></img>
+        <h1>404 page not found</h1>
+      </div>
+    </div>
+  );
+};
+
+export default error;

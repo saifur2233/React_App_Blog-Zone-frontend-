@@ -87,7 +87,6 @@ const signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //console.log(fullname, user, email, pwd);
 
     const data = {
       name: fullname,
@@ -101,6 +100,8 @@ const signup = () => {
       .then((response) => {
         //console.log(response?.data);
         const accessToken = response?.data;
+        localStorage.setItem('mytoken', accessToken);
+
         setUser('');
         setPwd('');
         setSuccess(true);
@@ -112,121 +113,112 @@ const signup = () => {
 
   return (
     <>
-      {success ? (
-        <section>
-          <h1>Success!</h1>
-          <p>
-            <a href="#">Sign In</a>
-          </p>
-        </section>
-      ) : (
-        <div style={myStyle}>
-          <Card style={cardStyle}>
-            <Card.Header style={titleStyle}>
-              <h4>Sign Up</h4>
-            </Card.Header>
-            <Card.Body>
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter your Name"
-                    id="fullname"
-                    ref={fullnameRef}
-                    autoComplete="off"
-                    onChange={(e) => setFullname(e.target.value)}
-                    value={fullname}
-                    required
-                    aria-invalid={validFullname ? 'false' : 'true'}
-                    aria-describedby="fullname"
-                    onFocus={() => setFullnameFocus(true)}
-                    onBlur={() => setFullnameFocus(false)}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Username</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter your Username"
-                    id="username"
-                    ref={userRef}
-                    autoComplete="off"
-                    onChange={(e) => setUser(e.target.value)}
-                    value={user}
-                    required
-                    aria-invalid={validName ? 'false' : 'true'}
-                    aria-describedby="uidnote"
-                    onFocus={() => setUserFocus(true)}
-                    onBlur={() => setUserFocus(false)}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="Enter your Email"
-                    id="email"
-                    ref={emailRef}
-                    autoComplete="off"
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                    required
-                    aria-invalid={validEamil ? 'false' : 'true'}
-                    aria-describedby="email"
-                    onFocus={() => setEmailFocus(true)}
-                    onBlur={() => setEmailFocus(false)}
-                  />
-                </Form.Group>
+      <div style={myStyle}>
+        <Card style={cardStyle}>
+          <Card.Header style={titleStyle}>
+            <h4>Sign Up</h4>
+          </Card.Header>
+          <Card.Body>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter your Name"
+                  id="fullname"
+                  ref={fullnameRef}
+                  autoComplete="off"
+                  onChange={(e) => setFullname(e.target.value)}
+                  value={fullname}
+                  required
+                  aria-invalid={validFullname ? 'false' : 'true'}
+                  aria-describedby="fullname"
+                  onFocus={() => setFullnameFocus(true)}
+                  onBlur={() => setFullnameFocus(false)}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter your Username"
+                  id="username"
+                  ref={userRef}
+                  autoComplete="off"
+                  onChange={(e) => setUser(e.target.value)}
+                  value={user}
+                  required
+                  aria-invalid={validName ? 'false' : 'true'}
+                  aria-describedby="uidnote"
+                  onFocus={() => setUserFocus(true)}
+                  onBlur={() => setUserFocus(false)}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter your Email"
+                  id="email"
+                  ref={emailRef}
+                  autoComplete="off"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                  required
+                  aria-invalid={validEamil ? 'false' : 'true'}
+                  aria-describedby="email"
+                  onFocus={() => setEmailFocus(true)}
+                  onBlur={() => setEmailFocus(false)}
+                />
+              </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Enter your Password"
-                    id="password"
-                    onChange={(e) => setPwd(e.target.value)}
-                    value={pwd}
-                    required
-                    aria-invalid={validPwd ? 'false' : 'true'}
-                    aria-describedby="pwdnote"
-                    onFocus={() => setPwdFocus(true)}
-                    onBlur={() => setPwdFocus(false)}
-                  />
-                </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Enter your Password"
+                  id="password"
+                  onChange={(e) => setPwd(e.target.value)}
+                  value={pwd}
+                  required
+                  aria-invalid={validPwd ? 'false' : 'true'}
+                  aria-describedby="pwdnote"
+                  onFocus={() => setPwdFocus(true)}
+                  onBlur={() => setPwdFocus(false)}
+                />
+              </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Confirm Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Confirm Password"
-                    id="confirm_pwd"
-                    onChange={(e) => setMatchPwd(e.target.value)}
-                    value={matchPwd}
-                    required
-                    aria-invalid={validMatch ? 'false' : 'true'}
-                    aria-describedby="confirmnote"
-                    onFocus={() => setMatchFocus(true)}
-                    onBlur={() => setMatchFocus(false)}
-                  />
-                </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Confirm Password"
+                  id="confirm_pwd"
+                  onChange={(e) => setMatchPwd(e.target.value)}
+                  value={matchPwd}
+                  required
+                  aria-invalid={validMatch ? 'false' : 'true'}
+                  aria-describedby="confirmnote"
+                  onFocus={() => setMatchFocus(true)}
+                  onBlur={() => setMatchFocus(false)}
+                />
+              </Form.Group>
 
-                <div className="d-grid gap-2">
-                  <Button variant="outline-primary" size="md" type="submit">
-                    Submit
-                  </Button>{' '}
-                </div>
-              </Form>
-            </Card.Body>
-            <Card.Footer style={footerStyle}>
-              <p>
-                Already have an account?
-                <Card.Link href="/signin"> Sign In</Card.Link>
-              </p>
-            </Card.Footer>
-          </Card>
-        </div>
-      )}
+              <div className="d-grid gap-2">
+                <Button variant="outline-primary" size="md" type="submit">
+                  Submit
+                </Button>{' '}
+              </div>
+            </Form>
+          </Card.Body>
+          <Card.Footer style={footerStyle}>
+            <p>
+              Already have an account?
+              <Card.Link href="/signin"> Sign In</Card.Link>
+            </p>
+          </Card.Footer>
+        </Card>
+      </div>
     </>
   );
 };

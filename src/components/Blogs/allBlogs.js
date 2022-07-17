@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import { Container } from 'react-bootstrap';
 const axios = require('axios').default;
 
@@ -44,15 +45,16 @@ const allBlogs = () => {
 
         <Row xs={1} md={3} className="g-4">
           {myblog &&
-            myblog.map((blog, id) => (
+            myblog.reverse().map((blog, id) => (
               <Col>
-                <Card key={id} border="info" style={{ height: '17rem' }}>
+                <Card key={id} border="info" style={{ height: '21rem' }}>
                   <Card.Body>
                     <Card.Title>{blog.title}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">
                       <i>Author: {blog.username}</i>
                     </Card.Subtitle>
                     <Card.Text>{blog.description}</Card.Text>
+                    <Button variant="outline-primary">Read More</Button>{' '}
                   </Card.Body>
                   <Card.Footer>
                     <small className="text-muted">
