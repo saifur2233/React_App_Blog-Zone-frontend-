@@ -10,6 +10,7 @@ import * as Icon from 'react-bootstrap-icons';
 import carouselImg1 from '../../assets/images/bg1.jpeg';
 import carouselImg4 from '../../assets/images/bg4.jpeg';
 import Pagination from 'react-bootstrap/Pagination';
+import _ from 'lodash';
 
 const ControlledCarousel = () => {
   const backgroundColor = {
@@ -27,19 +28,14 @@ const ControlledCarousel = () => {
   const handleSelect = (selectedIndex) => {
     setIndex(selectedIndex);
   };
-  const active = 2;
-  const items = [];
-  for (let number = 1; number <= 5; number++) {
-    items.push(
-      <Pagination.Item key={number} active={number === active}>
-        {number}
-      </Pagination.Item>
-    );
-  }
 
   const [myblog, setMyBlog] = useState(null);
   const [isLoding, setIsLoding] = useState(true);
   const [error, setError] = useState(null);
+
+  const pageSize = 6;
+  const [paginatedPosts, setPaginatedPosts] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const getData = async () => {
     await axios
@@ -47,6 +43,7 @@ const ControlledCarousel = () => {
       .then(function (response) {
         // handle success
         setMyBlog(response.data);
+        setPaginatedPosts(_(response.data).slice(0).take(pageSize).value());
       })
       .catch(function (error) {
         // handle error
@@ -63,6 +60,17 @@ const ControlledCarousel = () => {
     getData();
   }, []);
 
+  const pageCount = myblog ? Math.ceil(myblog.length / pageSize) : 0;
+  if (pageCount === 1) return null;
+  const pages = _.range(1, pageCount + 1);
+  //console.log('num of pages', pages);
+  const pagination = (pageNo) => {
+    setCurrentPage(pageNo);
+    const startIndex = (pageNo - 1) * pageSize;
+    const paginatedPost = _(myblog).slice(startIndex).take(pageSize).value();
+    setPaginatedPosts(paginatedPost);
+  };
+
   return (
     <>
       <Carousel interval={2000} activeIndex={index} onSelect={handleSelect}>
@@ -77,7 +85,7 @@ const ControlledCarousel = () => {
             <h3>First slide label</h3>
             <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
             <p>
-              <Button>
+              <Button href="/blogs">
                 View Blogs <Icon.ArrowRight color="white" size={15} />
               </Button>
             </p>
@@ -95,7 +103,7 @@ const ControlledCarousel = () => {
             <h3>Second slide label</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
             <p>
-              <Button>
+              <Button href="/blogs">
                 View Blogs <Icon.ArrowRight color="white" size={15} />
               </Button>
             </p>
@@ -115,7 +123,7 @@ const ControlledCarousel = () => {
               Praesent commodo cursus magna, vel scelerisque nisl consectetur.
             </p>
             <p>
-              <Button>
+              <Button href="/blogs">
                 View Blogs <Icon.ArrowRight color="white" size={15} />
               </Button>
             </p>
@@ -135,7 +143,7 @@ const ControlledCarousel = () => {
               Praesent commodo cursus magna, vel scelerisque nisl consectetur.
             </p>
             <p>
-              <Button>
+              <Button href="/blogs">
                 View Blogs <Icon.ArrowRight color="white" size={15} />
               </Button>
             </p>
@@ -149,7 +157,7 @@ const ControlledCarousel = () => {
 
           <Row xs={1} md={3} className="g-4">
             {myblog &&
-              myblog.map((blog, id) => (
+              paginatedPosts.map((blog, id) => (
                 <Col>
                   <Card key={id} border="info" style={{ height: '21rem' }}>
                     <Card.Body>
@@ -158,7 +166,12 @@ const ControlledCarousel = () => {
                         <i>Author: {blog.username}</i>
                       </Card.Subtitle>
                       <Card.Text>{blog.description}</Card.Text>
-                      <Button variant="outline-primary">Read More</Button>{' '}
+                      <Button
+                        variant="outline-primary"
+                        onClick={() => console.log('view story button click')}
+                      >
+                        View Full Blog
+                      </Button>{' '}
                     </Card.Body>
                     <Card.Footer>
                       <small className="text-muted">
@@ -171,7 +184,20 @@ const ControlledCarousel = () => {
           </Row>
         </Container>
         <div style={paginationStyle}>
-          <Pagination size="lg">{items}</Pagination>
+          <Pagination size="lg">
+            {pages.map((page) => (
+              <Pagination.Item
+                className={page === currentPage ? 'active' : ''}
+                onClick={() => pagination(page)}
+              >
+                {page}
+              </Pagination.Item>
+            ))}
+            {/* <Pagination.Item active="1">1</Pagination.Item>
+            
+            <Pagination.Item>3</Pagination.Item>
+            <Pagination.Item>4</Pagination.Item> */}
+          </Pagination>
         </div>
       </div>
     </>

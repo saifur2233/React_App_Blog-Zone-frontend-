@@ -10,12 +10,13 @@ import SignIn from './components/Authentication/signin';
 import SignUp from './components/Authentication/signup';
 import SignOut from './components/Authentication/signout';
 import Profile from './components/Authentication/profile';
-import TestBlog from './components/Test/allBlogs';
+import ViewFullBlog from './components/Blogs/viewFullBlog';
 import Footer from './components/Footer/footer';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
   const token = localStorage.getItem('mytoken');
+
   return (
     <BrowserRouter>
       <Navbar />
@@ -33,7 +34,7 @@ function App() {
         ) : (
           <Route path="/error" element={<Error />} />
         )}
-        <Route path="/test" element={<TestBlog />} />
+        <Route path="/viewblog" element={<ViewFullBlog />} />
         <Route path="*" element={<Error />} />
       </Routes>
       <Footer />

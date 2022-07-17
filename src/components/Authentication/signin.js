@@ -1,10 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+const axios = require('axios').default;
 import background from '../../assets/images/login/login3.jpg';
-import AuthService from './authService';
 const signin = () => {
   const myStyle = {
     backgroundImage: `url(${background})`,
@@ -27,41 +27,36 @@ const signin = () => {
     color: '#999999',
   };
 
-  const userRef = useRef();
-
   const [user, setUser] = useState('');
   const [pwd, setPwd] = useState('');
   const [errMsg, setErrMsg] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
-
-  useEffect(() => {
-    setErrMsg('');
-  }, [user, pwd]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    AuthService.login(user, pwd).then(
-      () => {
+    console.log(user, pwd);
+    const data = {
+      username: user,
+      password: pwd,
+    };
+    await axios
+      .post('http://localhost:3001/api/v1/signin/', data)
+      .then((response) => {
+        //console.log(response.data.accessToken);
+        const accessToken = response.data.accessToken;
+        localStorage.setItem('mytoken', accessToken);
         navigate('/');
         window.location.reload();
-      },
-      (error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        setErrMsg(resMessage);
-      }
-    );
-    setUser('');
-    setPwd('');
+      })
+      .catch((error) => {
+        console.log(error);
+        setErrMsg(error);
+      });
   };
+
+  useEffect(() => {
+    handleSubmit();
+  }, []);
 
   return (
     <>
@@ -72,12 +67,12 @@ const signin = () => {
           </Card.Header>
           <Card.Body>
             <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="username">
+              <Form.Group className="mb-3">
                 <Form.Label>Username</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter Username"
-                  ref={userRef}
+                  id="user"
                   autoComplete="off"
                   onChange={(e) => setUser(e.target.value)}
                   value={user}
@@ -85,11 +80,12 @@ const signin = () => {
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="password">
+              <Form.Group className="mb-3">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
                   placeholder="Enter Password"
+                  id="pwd"
                   onChange={(e) => setPwd(e.target.value)}
                   value={pwd}
                   required

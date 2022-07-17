@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -50,30 +50,53 @@ const profile = () => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [fullname, setFullname] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [createdAt, setcreatedAt] = useState('');
-  const [updatedAt, setupdatedAt] = useState('');
 
-  axios
-    .get('http://localhost:3001/api/v1/users/' + tokenUsername)
-    .then(function (response) {
-      setFullname(response.data.name);
-      setUsername(response.data.username);
-      setEmail(response.data.email);
-      setcreatedAt(response.data.createdAt);
-      setupdatedAt(response.data.updatedAt);
-      //console.log(response.data);
-    })
-    .catch(function (error) {
-      // handle error
-      console.log(error);
-    });
+  const [userData, setUserData] = useState('');
 
-  const handleSubmit = () => {
-    console.log('blog published');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+
+  const getUserData = async () => {
+    axios
+      .get('http://localhost:3001/api/v1/users/' + tokenUsername)
+      .then(function (response) {
+        setUserData(response.data);
+        //console.log(response.data);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = {
+      title,
+      tokenUsername,
+      description,
+    };
+    await axios
+      .post('http://localhost:3001/api/v1/posts', data)
+      .then(function (response) {
+        // handle success
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        // handle error
+        // setError(error.message);
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  useEffect(() => {
+    handleSubmit();
+  }, []);
 
   return (
     <>
@@ -86,15 +109,15 @@ const profile = () => {
                   <h1>SR</h1>
                 </div>
               </div>
-              <h4>Full Name: {fullname}</h4>
-              <p>Username : {username}</p>
-              <p>Email: {email}</p>
-              <p>Profile Created At: {createdAt}</p>
-              <p>Profile Updated At: {updatedAt}</p>
+              <h4>Full Name: {userData.name}</h4>
+              <p>Username : {userData.username}</p>
+              <p>Email: {userData.email}</p>
+              <p>Profile Created At: {userData.createdAt}</p>
+              <p>Profile Updated At: {userData.updatedAt}</p>
             </Card.Body>
             <Card.Footer>
               <Button variant="outline-primary">Update</Button>{' '}
-              <Button variant="outline-primary" onClick={handleShow}>
+              <Button variant="outline-warning" onClick={handleShow}>
                 Create Posts
               </Button>{' '}
               <Button style={{ float: 'right' }} variant="outline-danger">
@@ -121,13 +144,23 @@ const profile = () => {
                   <Form.Control
                     type="text"
                     placeholder="Blog Title"
+                    id="title"
+                    onChange={(e) => setTitle(e.target.value)}
+                    value={title}
                     autoFocus
                     required
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>Description</Form.Label>
-                  <Form.Control as="textarea" rows={3} required />
+                  <Form.Control
+                    as="textarea"
+                    id="description"
+                    onChange={(e) => setDescription(e.target.value)}
+                    value={description}
+                    rows={3}
+                    required
+                  />
                 </Form.Group>
                 <Button variant="primary" type="submit">
                   Save Changes

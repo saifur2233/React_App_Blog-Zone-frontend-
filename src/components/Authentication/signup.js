@@ -1,11 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import background from '../../assets/images/login/login2.jpg';
 const axios = require('axios').default;
-const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const signup = () => {
   const myStyle = {
@@ -32,65 +31,21 @@ const signup = () => {
     width: '30rem',
   };
 
-  const fullnameRef = useRef();
-  const userRef = useRef();
-  const emailRef = useRef();
-  const errRef = useRef();
-
+  const navigate = useNavigate();
   const [fullname, setFullname] = useState('');
-  const [validFullname, setValidFullname] = useState(false);
-  const [fullnameFocus, setFullnameFocus] = useState(false);
-
-  const [user, setUser] = useState('');
-  const [validName, setValidName] = useState(false);
-  const [userFocus, setUserFocus] = useState(false);
-
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [validEamil, setValidEamil] = useState(false);
-  const [emailFocus, setEmailFocus] = useState(false);
-
   const [pwd, setPwd] = useState('');
-  const [validPwd, setValidPwd] = useState(false);
-  const [pwdFocus, setPwdFocus] = useState(false);
-
-  const [matchPwd, setMatchPwd] = useState('');
-  const [validMatch, setValidMatch] = useState(false);
-  const [matchFocus, setMatchFocus] = useState(false);
+  const [confirmPwd, setConfirmPwd] = useState('');
 
   const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
-
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
-
-  useEffect(() => {
-    setValidFullname(fullname);
-  }, [fullname]);
-
-  useEffect(() => {
-    setValidName(USER_REGEX.test(user));
-  }, [user]);
-
-  useEffect(() => {
-    setValidEamil(email);
-  }, [email]);
-
-  useEffect(() => {
-    setValidPwd(PWD_REGEX.test(pwd));
-    setValidMatch(pwd === matchPwd);
-  }, [pwd, matchPwd]);
-
-  useEffect(() => {
-    setErrMsg('');
-  }, [user, pwd, matchPwd]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const data = {
       name: fullname,
-      username: user,
+      username: username,
       email: email,
       password: pwd,
     };
@@ -98,18 +53,21 @@ const signup = () => {
     await axios
       .post('http://localhost:3001/api/v1/signup/', data)
       .then((response) => {
-        //console.log(response?.data);
+        console.log(response?.data);
         const accessToken = response?.data;
         localStorage.setItem('mytoken', accessToken);
-
-        setUser('');
-        setPwd('');
-        setSuccess(true);
+        navigate('/');
+        window.location.reload();
       })
       .catch((error) => {
         console.log(error);
+        setErrMsg(error);
       });
   };
+
+  useEffect(() => {
+    handleSubmit();
+  }, []);
 
   return (
     <>
@@ -126,15 +84,10 @@ const signup = () => {
                   type="text"
                   placeholder="Enter your Name"
                   id="fullname"
-                  ref={fullnameRef}
                   autoComplete="off"
                   onChange={(e) => setFullname(e.target.value)}
                   value={fullname}
                   required
-                  aria-invalid={validFullname ? 'false' : 'true'}
-                  aria-describedby="fullname"
-                  onFocus={() => setFullnameFocus(true)}
-                  onBlur={() => setFullnameFocus(false)}
                 />
               </Form.Group>
               <Form.Group className="mb-3">
@@ -143,15 +96,10 @@ const signup = () => {
                   type="text"
                   placeholder="Enter your Username"
                   id="username"
-                  ref={userRef}
                   autoComplete="off"
-                  onChange={(e) => setUser(e.target.value)}
-                  value={user}
+                  onChange={(e) => setUsername(e.target.value)}
+                  value={username}
                   required
-                  aria-invalid={validName ? 'false' : 'true'}
-                  aria-describedby="uidnote"
-                  onFocus={() => setUserFocus(true)}
-                  onBlur={() => setUserFocus(false)}
                 />
               </Form.Group>
               <Form.Group className="mb-3">
@@ -160,15 +108,10 @@ const signup = () => {
                   type="email"
                   placeholder="Enter your Email"
                   id="email"
-                  ref={emailRef}
                   autoComplete="off"
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   required
-                  aria-invalid={validEamil ? 'false' : 'true'}
-                  aria-describedby="email"
-                  onFocus={() => setEmailFocus(true)}
-                  onBlur={() => setEmailFocus(false)}
                 />
               </Form.Group>
 
@@ -181,10 +124,6 @@ const signup = () => {
                   onChange={(e) => setPwd(e.target.value)}
                   value={pwd}
                   required
-                  aria-invalid={validPwd ? 'false' : 'true'}
-                  aria-describedby="pwdnote"
-                  onFocus={() => setPwdFocus(true)}
-                  onBlur={() => setPwdFocus(false)}
                 />
               </Form.Group>
 
@@ -194,13 +133,9 @@ const signup = () => {
                   type="password"
                   placeholder="Confirm Password"
                   id="confirm_pwd"
-                  onChange={(e) => setMatchPwd(e.target.value)}
-                  value={matchPwd}
+                  onChange={(e) => setConfirmPwd(e.target.value)}
+                  value={confirmPwd}
                   required
-                  aria-invalid={validMatch ? 'false' : 'true'}
-                  aria-describedby="confirmnote"
-                  onFocus={() => setMatchFocus(true)}
-                  onBlur={() => setMatchFocus(false)}
                 />
               </Form.Group>
 
@@ -209,6 +144,13 @@ const signup = () => {
                   Submit
                 </Button>{' '}
               </div>
+              {errMsg && (
+                <div className="form-group mt-2">
+                  <div className="alert alert-danger text-center" role="alert">
+                    {errMsg}
+                  </div>
+                </div>
+              )}
             </Form>
           </Card.Body>
           <Card.Footer style={footerStyle}>

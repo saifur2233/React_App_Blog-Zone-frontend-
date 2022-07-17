@@ -24,7 +24,7 @@ const navbar = () => {
       {['md'].map((expand) => (
         <Navbar key={expand} style={navBarStyle} expand={expand}>
           <Container>
-            <Navbar.Brand href="#" style={itemColor}>
+            <Navbar.Brand href="/" style={itemColor}>
               <b>Blog Zone</b>
             </Navbar.Brand>
             <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
