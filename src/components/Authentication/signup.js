@@ -4,6 +4,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import background from '../../assets/images/login/login2.jpg';
+import Cookies from 'js-cookie';
 const axios = require('axios').default;
 
 const signup = () => {
@@ -56,6 +57,11 @@ const signup = () => {
         console.log(response?.data);
         const accessToken = response?.data;
         localStorage.setItem('mytoken', accessToken);
+        Cookies.set('macaron', accessToken, {
+          secure: true,
+          sameSite: 'strict',
+          expires: 7,
+        });
         navigate('/');
         window.location.reload();
       })

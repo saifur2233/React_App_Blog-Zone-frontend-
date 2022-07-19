@@ -6,7 +6,9 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
-import myusername from '../Authentication/decodeUsername';
+import { isExpired, decodeToken } from 'react-jwt';
+import Cookies from 'js-cookie';
+
 const navbar = () => {
   const navBarStyle = {
     background: `linear-gradient(to bottom, #003366 0%, #0099cc 100%)`,
@@ -17,8 +19,14 @@ const navbar = () => {
     backgroundColor: '#003366',
   };
   const itemColor = { color: 'white' };
-  const token = localStorage.getItem('mytoken');
-  const name = myusername();
+
+  const mycookie = Cookies.get('macaron');
+
+  const myDecodedToken = decodeToken(mycookie);
+  const isMyTokenExpired = isExpired(mycookie);
+  //console.log(myDecodedToken.username);
+  //const tokenUsername = myDecodedToken.username;
+
   return (
     <div>
       {['md'].map((expand) => (
@@ -64,12 +72,12 @@ const navbar = () => {
                   <Nav.Link href="/contact" style={itemColor}>
                     Contact
                   </Nav.Link>
-                  {token && (
+                  {mycookie && myDecodedToken && isMyTokenExpired === false && (
                     <Nav.Link href="/profile" style={itemColor}>
-                      {name}
+                      {myDecodedToken.username}
                     </Nav.Link>
                   )}
-                  {token ? (
+                  {mycookie && myDecodedToken && isMyTokenExpired === false ? (
                     <Nav.Link href="/signout" style={itemColor}>
                       Sign Out
                     </Nav.Link>
@@ -78,12 +86,6 @@ const navbar = () => {
                       Sign In
                     </Nav.Link>
                   )}
-                  {/* <Nav.Link href="/signin" style={itemColor}>
-                    Sign In
-                  </Nav.Link>
-                  <Nav.Link href="/signup" style={itemColor}>
-                    Sign Up
-                  </Nav.Link> */}
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>

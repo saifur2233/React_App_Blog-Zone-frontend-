@@ -42,14 +42,12 @@ const profile = () => {
   };
 
   const navigate = useNavigate();
-  const token = localStorage.getItem('mytoken');
+  //const token = localStorage.getItem('mytoken');
   const mycookie = Cookies.get('macaron');
-  console.log(mycookie);
+  //console.log(mycookie);
 
-  const myDecodedToken = decodeToken(token);
-  const isMyTokenExpired = isExpired(token);
-
-  //console.log(myDecodedToken.username);
+  const myDecodedToken = decodeToken(mycookie);
+  const isMyTokenExpired = isExpired(mycookie);
   const tokenUsername = myDecodedToken.username;
 
   const [show, setShow] = useState(false);
@@ -93,7 +91,7 @@ const profile = () => {
         description: description,
       },
       headers: {
-        Authorization: 'Bearer ' + token,
+        Authorization: 'Bearer ' + mycookie,
       },
     })
       .then(function () {
@@ -118,7 +116,7 @@ const profile = () => {
         email: email,
       },
       headers: {
-        Authorization: 'Bearer ' + token,
+        Authorization: 'Bearer ' + mycookie,
       },
     })
       .then(function () {
@@ -146,7 +144,7 @@ const profile = () => {
   return (
     <>
       <div style={myStyle}>
-        {token && myDecodedToken && isMyTokenExpired == false ? (
+        {mycookie && myDecodedToken && isMyTokenExpired === false ? (
           <Card style={{ width: '35rem' }}>
             <Card.Body>
               <div style={userImg}>

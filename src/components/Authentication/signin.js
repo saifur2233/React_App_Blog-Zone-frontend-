@@ -50,7 +50,11 @@ const signin = () => {
         //   maxAge: 60 * 60 * 24 * 30 * 1000, //30 days
         //   httpOnly: true,
         // });
-        Cookies.set('macaron', accessToken, { expires: 7 });
+        Cookies.set('macaron', accessToken, {
+          secure: true,
+          sameSite: 'strict',
+          expires: 7,
+        });
         navigate('/');
         window.location.reload();
       })

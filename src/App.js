@@ -13,9 +13,14 @@ import Profile from './components/Authentication/profile';
 import ViewFullBlog from './components/Blogs/viewFullBlog';
 import Footer from './components/Footer/footer';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { isExpired, decodeToken } from 'react-jwt';
+import Cookies from 'js-cookie';
 
 function App() {
-  const token = localStorage.getItem('mytoken');
+  const mycookie = Cookies.get('macaron');
+  const myDecodedToken = decodeToken(mycookie);
+  const isMyTokenExpired = isExpired(mycookie);
+  //const tokenUsername = myDecodedToken.username;
 
   return (
     <BrowserRouter>
@@ -29,7 +34,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signout" element={<SignOut />} />
-        {token ? (
+        {mycookie && myDecodedToken && isMyTokenExpired === false ? (
           <Route path="/profile" element={<Profile />} />
         ) : (
           <Route path="/error" element={<Error />} />
