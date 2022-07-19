@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { Container } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 const axios = require('axios').default;
 
 const allBlogs = () => {
@@ -11,6 +12,7 @@ const allBlogs = () => {
     backgroundColor: '#DCDCDC',
   };
 
+  const navigate = useNavigate();
   const [myblog, setMyBlog] = useState(null);
   const [isLoding, setIsLoding] = useState(true);
   const [error, setError] = useState(null);
@@ -53,12 +55,25 @@ const allBlogs = () => {
                     <Card.Subtitle className="mb-2 text-muted">
                       <i>Author: {blog.username}</i>
                     </Card.Subtitle>
-                    <Card.Text>{blog.description}</Card.Text>
-                    <Button variant="outline-primary">Read More</Button>{' '}
+                    <Card.Text>
+                      {blog.description.length < 235
+                        ? `${blog.description}`
+                        : `${blog.description.substring(0, 235)}`}
+                      .....
+                    </Card.Text>
+                    <Button
+                      variant="outline-primary"
+                      onClick={() => {
+                        navigate(`/viewblog/${blog.id}`);
+                        window.location.reload();
+                      }}
+                    >
+                      Read More
+                    </Button>{' '}
                   </Card.Body>
                   <Card.Footer>
                     <small className="text-muted">
-                      Last updated 3 mins ago
+                      Last updated {blog.updatedAt}
                     </small>
                   </Card.Footer>
                 </Card>

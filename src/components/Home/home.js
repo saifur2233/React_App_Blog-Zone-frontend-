@@ -11,6 +11,7 @@ import carouselImg1 from '../../assets/images/bg1.jpeg';
 import carouselImg4 from '../../assets/images/bg4.jpeg';
 import Pagination from 'react-bootstrap/Pagination';
 import _ from 'lodash';
+import { useNavigate } from 'react-router-dom';
 
 const ControlledCarousel = () => {
   const backgroundColor = {
@@ -23,6 +24,7 @@ const ControlledCarousel = () => {
     alignItems: 'center',
   };
 
+  const navigate = useNavigate();
   const [index, setIndex] = useState(0);
 
   const handleSelect = (selectedIndex) => {
@@ -165,17 +167,25 @@ const ControlledCarousel = () => {
                       <Card.Subtitle className="mb-2 text-muted">
                         <i>Author: {blog.username}</i>
                       </Card.Subtitle>
-                      <Card.Text>{blog.description}</Card.Text>
+                      <Card.Text>
+                        {blog.description.length < 235
+                          ? `${blog.description}`
+                          : `${blog.description.substring(0, 235)}`}
+                        .....
+                      </Card.Text>
                       <Button
                         variant="outline-primary"
-                        onClick={() => console.log('view story button click')}
+                        onClick={() => {
+                          navigate(`/viewblog/${blog.id}`);
+                          window.location.reload();
+                        }}
                       >
-                        View Full Blog
+                        Read More
                       </Button>{' '}
                     </Card.Body>
                     <Card.Footer>
                       <small className="text-muted">
-                        Last updated 3 mins ago
+                        Last updated {blog.updatedAt}
                       </small>
                     </Card.Footer>
                   </Card>

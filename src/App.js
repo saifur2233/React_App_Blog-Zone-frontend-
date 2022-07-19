@@ -34,7 +34,7 @@ function App() {
         ) : (
           <Route path="/error" element={<Error />} />
         )}
-        <Route path="/viewblog" element={<ViewFullBlog />} />
+        <Route path="/viewblog/:blogId" element={<ViewFullBlog />} />
         <Route path="*" element={<Error />} />
       </Routes>
       <Footer />

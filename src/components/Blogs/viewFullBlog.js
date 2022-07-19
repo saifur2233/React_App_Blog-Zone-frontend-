@@ -1,39 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import { useParams } from 'react-router-dom';
+const axios = require('axios').default;
 
-const viewFullBlog = ({ title }) => {
+const viewFullBlog = () => {
   const mainDiv = {
+    backgroundColor: 'lightGray',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     padding: '60px',
   };
-  console.log({ title });
-  //const {id, title, username,description, createdAt,updatedAt} = props
+
+  const { blogId } = useParams();
+  const [blog, setBlog] = useState('');
+  const [err, setError] = useState('');
+
+  const viewBlogData = async () => {
+    await axios
+      .get(`http://localhost:3001/api/v1/posts/${blogId}`)
+      .then(function (response) {
+        setBlog(response.data);
+      })
+      .catch(function (error) {
+        setError(error.message);
+      });
+  };
+
+  useEffect(() => {
+    viewBlogData();
+  }, []);
+
   return (
     <div style={mainDiv}>
+      {err && <h2>{err}</h2>}
       <Card border="warning" style={{ width: '50rem' }}>
         <Card.Body>
-          <Card.Title>Card Title</Card.Title>
+          <Card.Title>{blog.title}</Card.Title>
           <Card.Subtitle className="mb-2 text-muted">
-            Card Subtitle
+            {blog.username}
           </Card.Subtitle>
-          <Card.Text>
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.Some quick example text to build on the
-            card title and make up the bulk of the card's content. Some quick
-            example text to build on the card title and make up the bulk of the
-            card's content.Some quick example text to build on the card title
-            and make up the bulk of the card's content.Some quick example text
-            to build on the card title and make up the bulk of the card's
-            content. bulk of the card's content. bulk of the card's content.
-          </Card.Text>
-          <Card.Link href="#">Card Link</Card.Link>
-          <Card.Link href="#">Another Link</Card.Link>
+          <Card.Text>{blog.description}</Card.Text>
         </Card.Body>
         <Card.Footer>
-          <small className="text-muted">Last updated 3 mins ago</small>
+          <small className="text-muted">Last updated {blog.updatedAt}</small>
           <Button variant="outline-primary" style={{ float: 'right' }}>
             Update
           </Button>{' '}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Cookies from 'js-cookie';
 const axios = require('axios').default;
 import background from '../../assets/images/login/login3.jpg';
 const signin = () => {
@@ -34,7 +35,7 @@ const signin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(user, pwd);
+    //console.log(user, pwd);
     const data = {
       username: user,
       password: pwd,
@@ -45,11 +46,16 @@ const signin = () => {
         //console.log(response.data.accessToken);
         const accessToken = response.data.accessToken;
         localStorage.setItem('mytoken', accessToken);
+        // response.cookie('mycookie', accessToken, {
+        //   maxAge: 60 * 60 * 24 * 30 * 1000, //30 days
+        //   httpOnly: true,
+        // });
+        Cookies.set('macaron', accessToken, { expires: 7 });
         navigate('/');
         window.location.reload();
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
         setErrMsg(error);
       });
   };

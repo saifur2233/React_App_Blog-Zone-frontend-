@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { isExpired, decodeToken } from 'react-jwt';
 const axios = require('axios').default;
+import Cookies from 'js-cookie';
+
 const profile = () => {
   const myStyle = {
     backgroundColor: 'lightGray',
@@ -38,7 +41,10 @@ const profile = () => {
     textAlign: 'center',
   };
 
+  const navigate = useNavigate();
   const token = localStorage.getItem('mytoken');
+  const mycookie = Cookies.get('macaron');
+  console.log(mycookie);
 
   const myDecodedToken = decodeToken(token);
   const isMyTokenExpired = isExpired(token);
@@ -51,42 +57,77 @@ const profile = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [updateShow, setUpdateShow] = useState(false);
+  const handleUpdateClose = () => setUpdateShow(false);
+  const handleUpdateShow = () => setUpdateShow(true);
+  const [fullname, setFullname] = useState('');
+  const [email, setEmail] = useState('');
+
   const [userData, setUserData] = useState('');
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
+  // show the user profile data
   const getUserData = async () => {
     axios
       .get('http://localhost:3001/api/v1/users/' + tokenUsername)
       .then(function (response) {
         setUserData(response.data);
-        //console.log(response.data);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       });
   };
 
+  //user create a post
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = {
-      title,
-      tokenUsername,
-      description,
-    };
-    await axios
-      .post('http://localhost:3001/api/v1/posts', data)
-      .then(function (response) {
-        // handle success
-        console.log(response.data);
+    await axios({
+      method: 'post',
+      url: 'http://localhost:3001/api/v1/posts',
+      data: {
+        title: title,
+        username: tokenUsername,
+        description: description,
+      },
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    })
+      .then(function () {
+        alert('Successfully blog created');
+        navigate('/blogs');
+        window.location.reload();
       })
       .catch(function (error) {
-        // handle error
-        // setError(error.message);
-        console.log(error);
+        alert(error.message);
+      });
+  };
+
+  //update user info
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+
+    await axios({
+      method: 'put',
+      url: 'http://localhost:3001/api/v1/users/' + tokenUsername,
+      data: {
+        name: fullname,
+        email: email,
+      },
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    })
+      .then(function () {
+        alert('Successfully User Info updated');
+        setUpdateShow(false);
+        window.location.reload();
+      })
+      .catch(function (error) {
+        alert(error.message);
       });
   };
 
@@ -96,6 +137,10 @@ const profile = () => {
 
   useEffect(() => {
     handleSubmit();
+  }, []);
+
+  useEffect(() => {
+    handleUpdateSubmit();
   }, []);
 
   return (
@@ -110,13 +155,15 @@ const profile = () => {
                 </div>
               </div>
               <h4>Full Name: {userData.name}</h4>
-              <p>Username : {userData.username}</p>
-              <p>Email: {userData.email}</p>
-              <p>Profile Created At: {userData.createdAt}</p>
-              <p>Profile Updated At: {userData.updatedAt}</p>
+              <h5>Username : {userData.username}</h5>
+              <h5>Email: {userData.email}</h5>
+              <h5>Profile Created At: {userData.createdAt}</h5>
+              <h5>Profile Updated At: {userData.updatedAt}</h5>
             </Card.Body>
             <Card.Footer>
-              <Button variant="outline-primary">Update</Button>{' '}
+              <Button variant="outline-primary" onClick={handleUpdateShow}>
+                Update
+              </Button>{' '}
               <Button variant="outline-warning" onClick={handleShow}>
                 Create Posts
               </Button>{' '}
@@ -166,6 +213,48 @@ const profile = () => {
                   Save Changes
                 </Button>
                 <Button variant="danger" onClick={handleClose}>
+                  Close
+                </Button>
+              </Form>
+            </Modal.Body>
+          </Modal>
+        </div>
+
+        <div>
+          <Modal show={updateShow} onHide={handleUpdateClose}>
+            <Modal.Header closeButton style={titleStyle}>
+              <Modal.Title>Update Profile Information</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form onSubmit={handleUpdateSubmit}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Fullname"
+                    id="fullname"
+                    onChange={(e) => setFullname(e.target.value)}
+                    value={fullname}
+                    autoFocus
+                    required
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Email"
+                    id="email"
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    autoFocus
+                    required
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit">
+                  Save Changes
+                </Button>
+                <Button variant="danger" onClick={handleUpdateClose}>
                   Close
                 </Button>
               </Form>
