@@ -44,7 +44,6 @@ const profile = () => {
   const navigate = useNavigate();
   //const token = localStorage.getItem('mytoken');
   const mycookie = Cookies.get('macaron');
-  //console.log(mycookie);
 
   const myDecodedToken = decodeToken(mycookie);
   const isMyTokenExpired = isExpired(mycookie);
@@ -144,7 +143,7 @@ const profile = () => {
   return (
     <>
       <div style={myStyle}>
-        {mycookie && myDecodedToken && isMyTokenExpired === false ? (
+        {mycookie && myDecodedToken.username && isMyTokenExpired === false ? (
           <Card style={{ width: '35rem' }}>
             <Card.Body>
               <div style={userImg}>

@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
+
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import Offcanvas from 'react-bootstrap/Offcanvas';
+import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
+const axios = require('axios').default;
 import { isExpired, decodeToken } from 'react-jwt';
 import Cookies from 'js-cookie';
 
@@ -18,6 +21,12 @@ const navbar = () => {
     color: 'white',
     backgroundColor: '#003366',
   };
+  const titleStyle = {
+    backgroundColor: '#0d6efd',
+    color: 'white',
+    textAlign: 'center',
+  };
+
   const itemColor = { color: 'white' };
 
   const mycookie = Cookies.get('macaron');
@@ -25,7 +34,36 @@ const navbar = () => {
   const myDecodedToken = decodeToken(mycookie);
   const isMyTokenExpired = isExpired(mycookie);
   //console.log(myDecodedToken.username);
-  //const tokenUsername = myDecodedToken.username;
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    await axios({
+      method: 'post',
+      url: 'http://localhost:3001/api/v1/posts',
+      data: {
+        title: title,
+        username: myDecodedToken.username,
+        description: description,
+      },
+      headers: {
+        Authorization: 'Bearer ' + mycookie,
+      },
+    })
+      .then(function (response) {
+        alert('Successfully blog created');
+        const blogid = response.data.id;
+        window.location.href(`/viewblog/${blogid}`);
+      })
+      .catch(function (error) {
+        alert(error.message);
+      });
+  };
 
   return (
     <div>
@@ -66,18 +104,30 @@ const navbar = () => {
                   <Nav.Link href="/blogs" style={itemColor}>
                     Blogs
                   </Nav.Link>
+                  {mycookie &&
+                    myDecodedToken.username &&
+                    isMyTokenExpired === false && (
+                      <Nav.Link onClick={handleShow} style={itemColor}>
+                        Create Blog
+                      </Nav.Link>
+                    )}
                   <Nav.Link href="/about" style={itemColor}>
                     About Us
                   </Nav.Link>
-                  <Nav.Link href="/contact" style={itemColor}>
+                  {/* <Nav.Link href="/contact" style={itemColor}>
                     Contact
-                  </Nav.Link>
-                  {mycookie && myDecodedToken && isMyTokenExpired === false && (
-                    <Nav.Link href="/profile" style={itemColor}>
-                      {myDecodedToken.username}
-                    </Nav.Link>
-                  )}
-                  {mycookie && myDecodedToken && isMyTokenExpired === false ? (
+                  </Nav.Link> */}
+
+                  {mycookie &&
+                    myDecodedToken.username &&
+                    isMyTokenExpired === false && (
+                      <Nav.Link href="/profile" style={itemColor}>
+                        {myDecodedToken.username}
+                      </Nav.Link>
+                    )}
+                  {mycookie &&
+                  myDecodedToken.username &&
+                  isMyTokenExpired === false ? (
                     <Nav.Link href="/signout" style={itemColor}>
                       Sign Out
                     </Nav.Link>
@@ -92,6 +142,46 @@ const navbar = () => {
           </Container>
         </Navbar>
       ))}
+      <div>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton style={titleStyle}>
+            <Modal.Title>Publish Your Blog</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Title</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Blog Title"
+                  id="title"
+                  onChange={(e) => setTitle(e.target.value)}
+                  value={title}
+                  autoFocus
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  id="description"
+                  onChange={(e) => setDescription(e.target.value)}
+                  value={description}
+                  rows={3}
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit">
+                Save Changes
+              </Button>
+              <Button variant="danger" onClick={handleClose}>
+                Close
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
+      </div>
     </div>
   );
 };

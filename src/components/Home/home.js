@@ -163,7 +163,12 @@ const ControlledCarousel = () => {
                 <Col>
                   <Card key={id} border="info" style={{ height: '21rem' }}>
                     <Card.Body>
-                      <Card.Title>{blog.title}</Card.Title>
+                      <Card.Title>
+                        {blog.title.length < 30
+                          ? `${blog.title}`
+                          : `${blog.title.substring(0, 28)}`}
+                        ...
+                      </Card.Title>
                       <Card.Subtitle className="mb-2 text-muted">
                         <i>Author: {blog.username}</i>
                       </Card.Subtitle>

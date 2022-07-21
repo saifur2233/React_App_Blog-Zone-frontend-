@@ -4,7 +4,6 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import background from '../../assets/images/login/login2.jpg';
-import Cookies from 'js-cookie';
 const axios = require('axios').default;
 
 const signup = () => {
@@ -54,19 +53,18 @@ const signup = () => {
     await axios
       .post('http://localhost:3001/api/v1/signup/', data)
       .then((response) => {
-        console.log(response?.data);
-        const accessToken = response?.data;
-        localStorage.setItem('mytoken', accessToken);
-        Cookies.set('macaron', accessToken, {
-          secure: true,
-          sameSite: 'strict',
-          expires: 7,
-        });
+        console.log(response.data);
+        //const accessToken = response?.data;
+        //localStorage.setItem('mytoken', accessToken);
+        // Cookies.set('macaron', accessToken, {
+        //   secure: true,
+        //   sameSite: 'strict',
+        //   expires: 7,
+        // });
         navigate('/');
         window.location.reload();
       })
       .catch((error) => {
-        console.log(error);
         setErrMsg(error);
       });
   };

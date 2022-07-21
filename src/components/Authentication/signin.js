@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Cookies from 'js-cookie';
+
 const axios = require('axios').default;
 import background from '../../assets/images/login/login3.jpg';
 const signin = () => {
@@ -41,20 +41,18 @@ const signin = () => {
       password: pwd,
     };
     await axios
-      .post('http://localhost:3001/api/v1/signin/', data)
+      .post('http://localhost:3001/api/v1/signin/', data, {
+        withCredentials: true,
+      })
       .then((response) => {
-        //console.log(response.data.accessToken);
-        const accessToken = response.data.accessToken;
-        localStorage.setItem('mytoken', accessToken);
-        // response.cookie('mycookie', accessToken, {
-        //   maxAge: 60 * 60 * 24 * 30 * 1000, //30 days
-        //   httpOnly: true,
+        console.log(response.data);
+        //console.log('get from cookie', Cookies.get('macaron'));
+        //const accessToken = response.data.accessToken;
+        // Cookies.set('macaron', accessToken, {
+        //   secure: true,
+        //   sameSite: 'strict',
+        //   expires: 7,
         // });
-        Cookies.set('macaron', accessToken, {
-          secure: true,
-          sameSite: 'strict',
-          expires: 7,
-        });
         navigate('/');
         window.location.reload();
       })

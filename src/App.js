@@ -34,7 +34,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signout" element={<SignOut />} />
-        {mycookie && myDecodedToken && isMyTokenExpired === false ? (
+        {mycookie && myDecodedToken.username && isMyTokenExpired === false ? (
           <Route path="/profile" element={<Profile />} />
         ) : (
           <Route path="/error" element={<Error />} />
