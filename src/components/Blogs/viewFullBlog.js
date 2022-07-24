@@ -36,6 +36,7 @@ const viewFullBlog = () => {
   const isMyTokenExpired = isExpired(mycookie);
 
   const [updateShow, setUpdateShow] = useState(false);
+  const [updated, setUpdated] = useState(false);
   const handleUpdateClose = () => setUpdateShow(false);
   const handleUpdateShow = () => setUpdateShow(true);
   const [blogTitle, setBlogTitle] = useState('');
@@ -46,6 +47,8 @@ const viewFullBlog = () => {
       .get(`http://localhost:3001/api/v1/posts/search/${blogId}`)
       .then(function (response) {
         setBlog(response.data);
+        setBlogTitle(response.data.title);
+        setBlogDescription(response.data.description);
       })
       .catch(function (error) {
         setError(error.message);
@@ -68,9 +71,11 @@ const viewFullBlog = () => {
       },
     })
       .then(function () {
-        alert('Successfully User Info updated');
+        alert('Successfully Blog Info updated');
         setUpdateShow(false);
-        window.location.reload();
+        const blogid = blogId;
+        setUpdated(!updated);
+        navigate(`/viewblog/${blogid}`);
       })
       .catch(function (error) {
         alert(error.message);
@@ -90,7 +95,6 @@ const viewFullBlog = () => {
       .then(function () {
         alert('Successfully blog deleted.');
         navigate('/blogs');
-        window.location.reload();
       })
       .catch(function (error) {
         alert(error.message);
@@ -99,11 +103,15 @@ const viewFullBlog = () => {
 
   useEffect(() => {
     viewBlogData();
+  }, [blogId, updated]);
+
+  useEffect(() => {
+    handleUpdateSubmit();
   }, []);
 
-  useEffect(() => {}, []);
-
-  useEffect(() => {}, []);
+  useEffect(() => {
+    handleBlogDelete();
+  }, []);
 
   return (
     <div style={mainDiv}>

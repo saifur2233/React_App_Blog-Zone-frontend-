@@ -3,6 +3,8 @@
   "rules": {
     "no-console": 1,
     "prefer-const": 2,
+    "no-unused-vars": "warn",
+
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error"
   },

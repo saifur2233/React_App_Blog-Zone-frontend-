@@ -93,10 +93,10 @@ const profile = () => {
         Authorization: 'Bearer ' + mycookie,
       },
     })
-      .then(function () {
+      .then(function (response) {
         alert('Successfully blog created');
-        navigate('/blogs');
-        window.location.reload();
+        const blogid = response.data.id;
+        navigate(`/viewblog/${blogid}`);
       })
       .catch(function (error) {
         alert(error.message);
@@ -121,7 +121,6 @@ const profile = () => {
       .then(function () {
         alert('Successfully User Info updated');
         setUpdateShow(false);
-        window.location.reload();
       })
       .catch(function (error) {
         alert(error.message);

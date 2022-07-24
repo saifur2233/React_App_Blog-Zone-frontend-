@@ -53,14 +53,7 @@ const signup = () => {
     await axios
       .post('http://localhost:3001/api/v1/signup/', data)
       .then((response) => {
-        console.log(response.data);
-        //const accessToken = response?.data;
-        //localStorage.setItem('mytoken', accessToken);
-        // Cookies.set('macaron', accessToken, {
-        //   secure: true,
-        //   sameSite: 'strict',
-        //   expires: 7,
-        // });
+        //console.log(response.data);
         navigate('/');
         window.location.reload();
       })

@@ -25,16 +25,12 @@ const allBlogs = () => {
     await axios
       .get('http://localhost:3001/api/v1/posts')
       .then(function (response) {
-        // handle success
         setMyBlog(response.data);
       })
       .catch(function (error) {
-        // handle error
         setError(error.message);
-        //console.log(error);
       })
       .then(function () {
-        // always executed
         setIsLoding(false);
       });
   };
@@ -43,7 +39,6 @@ const allBlogs = () => {
     e.preventDefault();
 
     setMyBlog('');
-    //console.log(searchAuthor);
     await axios
       .get('http://localhost:3001/api/v1/posts/' + searchAuthor)
       .then(function (response) {
@@ -117,7 +112,7 @@ const allBlogs = () => {
                         variant="outline-primary"
                         onClick={() => {
                           navigate(`/viewblog/${blog.id}`);
-                          window.location.reload();
+                          //window.location.reload();
                         }}
                       >
                         Read More

@@ -44,15 +44,9 @@ const signin = () => {
       .post('http://localhost:3001/api/v1/signin/', data, {
         withCredentials: true,
       })
-      .then((response) => {
-        console.log(response.data);
-        //console.log('get from cookie', Cookies.get('macaron'));
-        //const accessToken = response.data.accessToken;
-        // Cookies.set('macaron', accessToken, {
-        //   secure: true,
-        //   sameSite: 'strict',
-        //   expires: 7,
-        // });
+      .then(() => {
+        //console.log(response.data);
+
         navigate('/');
         window.location.reload();
       })

@@ -182,7 +182,7 @@ const ControlledCarousel = () => {
                         variant="outline-primary"
                         onClick={() => {
                           navigate(`/viewblog/${blog.id}`);
-                          window.location.reload();
+                          //window.location.reload();
                         }}
                       >
                         Read More
