@@ -6,8 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useParams } from 'react-router-dom';
 const axios = require('axios').default;
-import { isExpired, decodeToken } from 'react-jwt';
-import Cookies from 'js-cookie';
+import { useAuth } from '../Authentication/AuthContext';
 
 const viewFullBlog = () => {
   const mainDiv = {
@@ -24,16 +23,12 @@ const viewFullBlog = () => {
     textAlign: 'center',
   };
 
+  const auth = useAuth();
   const navigate = useNavigate();
 
   const { blogId } = useParams();
   const [blog, setBlog] = useState('');
   const [err, setError] = useState('');
-
-  const mycookie = Cookies.get('macaron');
-
-  const myDecodedToken = decodeToken(mycookie);
-  const isMyTokenExpired = isExpired(mycookie);
 
   const [updateShow, setUpdateShow] = useState(false);
   const [updated, setUpdated] = useState(false);
@@ -63,12 +58,12 @@ const viewFullBlog = () => {
       url: 'http://localhost:3001/api/v1/posts/' + blogId,
       data: {
         title: blogTitle,
-        username: myDecodedToken.username,
+        username: auth.user,
         description: blogDescription,
       },
-      headers: {
-        Authorization: 'Bearer ' + mycookie,
-      },
+      // headers: {
+      //   Authorization: 'Bearer ' + mycookie,
+      // },
     })
       .then(function () {
         alert('Successfully Blog Info updated');
@@ -88,9 +83,9 @@ const viewFullBlog = () => {
     await axios({
       method: 'delete',
       url: 'http://localhost:3001/api/v1/posts/' + blogId,
-      headers: {
-        Authorization: 'Bearer ' + mycookie,
-      },
+      // headers: {
+      //   Authorization: 'Bearer ' + mycookie,
+      // },
     })
       .then(function () {
         alert('Successfully blog deleted.');
@@ -126,28 +121,24 @@ const viewFullBlog = () => {
         </Card.Body>
         <Card.Footer>
           <small className="text-muted">Last updated {blog.updatedAt}</small>
-          {mycookie &&
-            myDecodedToken.username === blog.username &&
-            isMyTokenExpired === false && (
-              <Button
-                variant="primary"
-                onClick={handleUpdateShow}
-                style={{ float: 'right' }}
-              >
-                Update
-              </Button>
-            )}
-          {mycookie &&
-            myDecodedToken.username === blog.username &&
-            isMyTokenExpired === false && (
-              <Button
-                variant="danger"
-                style={{ float: 'right', marginRight: '5px' }}
-                onClick={handleBlogDelete}
-              >
-                Delete
-              </Button>
-            )}
+          {auth.user == blog.username && (
+            <Button
+              variant="primary"
+              onClick={handleUpdateShow}
+              style={{ float: 'right' }}
+            >
+              Update
+            </Button>
+          )}
+          {auth.user == blog.username && (
+            <Button
+              variant="danger"
+              style={{ float: 'right', marginRight: '5px' }}
+              onClick={handleBlogDelete}
+            >
+              Delete
+            </Button>
+          )}
         </Card.Footer>
       </Card>
       <div>

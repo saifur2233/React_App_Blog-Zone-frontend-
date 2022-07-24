@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import background from '../../assets/images/login/login2.jpg';
-const axios = require('axios').default;
+import { useAuth } from './AuthContext';
 
 const signup = () => {
   const myStyle = {
@@ -31,6 +31,7 @@ const signup = () => {
     width: '30rem',
   };
 
+  const auth = useAuth();
   const navigate = useNavigate();
   const [fullname, setFullname] = useState('');
   const [username, setUsername] = useState('');
@@ -43,28 +44,13 @@ const signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = {
-      name: fullname,
-      username: username,
-      email: email,
-      password: pwd,
-    };
-
-    await axios
-      .post('http://localhost:3001/api/v1/signup/', data)
-      .then((response) => {
-        //console.log(response.data);
-        navigate('/');
-        window.location.reload();
-      })
-      .catch((error) => {
-        setErrMsg(error);
-      });
+    try {
+      auth.registration(fullname, username, email, pwd);
+      navigate('/');
+    } catch (error) {
+      setErrMsg(error);
+    }
   };
-
-  useEffect(() => {
-    handleSubmit();
-  }, []);
 
   return (
     <>

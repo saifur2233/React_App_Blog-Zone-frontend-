@@ -181,8 +181,7 @@ const ControlledCarousel = () => {
                       <Button
                         variant="outline-primary"
                         onClick={() => {
-                          navigate(`/viewblog/${blog.id}`);
-                          //window.location.reload();
+                          navigate(`/blog/${blog.id}`);
                         }}
                       >
                         Read More

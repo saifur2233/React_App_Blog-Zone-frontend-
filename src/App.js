@@ -13,36 +13,29 @@ import Profile from './components/Authentication/profile';
 import ViewFullBlog from './components/Blogs/viewFullBlog';
 import Footer from './components/Footer/footer';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { isExpired, decodeToken } from 'react-jwt';
-import Cookies from 'js-cookie';
+import { AuthProvider } from './components/Authentication/AuthContext';
 
 function App() {
-  const mycookie = Cookies.get('macaron');
-  const myDecodedToken = decodeToken(mycookie);
-  const isMyTokenExpired = isExpired(mycookie);
-  //const tokenUsername = myDecodedToken.username;
-
   return (
     <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/blogs" element={<AllBlogs />} />
-        <Route path="/post" element={<CreateBlog />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/signout" element={<SignOut />} />
-        {mycookie && myDecodedToken.username && isMyTokenExpired === false ? (
+      <AuthProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/blogs" element={<AllBlogs />} />
+          <Route path="/post" element={<CreateBlog />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signout" element={<SignOut />} />
           <Route path="/profile" element={<Profile />} />
-        ) : (
           <Route path="/error" element={<Error />} />
-        )}
-        <Route path="/viewblog/:blogId" element={<ViewFullBlog />} />
-        <Route path="*" element={<Error />} />
-      </Routes>
-      <Footer />
+          <Route path="/blog/:blogId" element={<ViewFullBlog />} />
+          <Route path="*" element={<Error />} />
+        </Routes>
+        <Footer />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

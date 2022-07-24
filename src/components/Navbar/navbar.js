@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -8,19 +8,9 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 const axios = require('axios').default;
-import { isExpired, decodeToken } from 'react-jwt';
-import Cookies from 'js-cookie';
+import { useAuth } from '../Authentication/AuthContext';
 
 const navbar = () => {
-  //const [loggedIn, setLoggedIn] = useState(false);
-  const [mycookie, setMycookie] = useState(Cookies.get('macaron'));
-  const [myDecodedToken, setMydecodedToken] = useState(decodeToken(mycookie));
-  const [isMyTokenExpired, setisMyTokenExpired] = useState(isExpired(mycookie));
-  useEffect(() => {
-    setMycookie(Cookies.get('macaron'));
-    setMydecodedToken(decodeToken(mycookie));
-    setisMyTokenExpired(isExpired(mycookie));
-  }, []);
   const navBarStyle = {
     background: `linear-gradient(to bottom, #003366 0%, #0099cc 100%)`,
     color: 'white',
@@ -33,6 +23,7 @@ const navbar = () => {
   };
   const itemColor = { color: 'white' };
 
+  const auth = useAuth();
   const navigate = useNavigate();
   //console.log(myDecodedToken.username);
   const [show, setShow] = useState(false);
@@ -49,17 +40,18 @@ const navbar = () => {
       url: 'http://localhost:3001/api/v1/posts',
       data: {
         title: title,
-        username: myDecodedToken.username,
+        username: auth.user,
         description: description,
       },
-      headers: {
-        Authorization: 'Bearer ' + mycookie,
-      },
+      // headers: {
+      //   Authorization: 'Bearer ' + mycookie,
+      // },
     })
       .then(function () {
         alert('Successfully blog created');
         navigate('/blogs');
-        window.location.reload();
+        handleClose();
+        //window.location.reload();
       })
       .catch(function (error) {
         alert(error.message);
@@ -71,7 +63,7 @@ const navbar = () => {
       {['md'].map((expand) => (
         <Navbar key={expand} style={navBarStyle} expand={expand}>
           <Container>
-            <Navbar.Brand href="/" style={itemColor}>
+            <Navbar.Brand onClick={() => navigate('/')} style={itemColor}>
               <b>Blog Zone</b>
             </Navbar.Brand>
             <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
@@ -88,43 +80,57 @@ const navbar = () => {
               <Offcanvas.Body>
                 <Nav className="justify-content-end flex-grow-1 pe-3">
                   <Nav.Link
-                    href="/"
+                    onClick={() => navigate('/')}
                     style={{ marginLeft: '5rem', color: 'white' }}
                   >
                     Home
                   </Nav.Link>
-                  <Nav.Link href="/blogs" style={itemColor}>
+                  <Nav.Link
+                    onClick={() => navigate('/blogs')}
+                    style={itemColor}
+                  >
                     Blogs
                   </Nav.Link>
-                  {mycookie &&
-                    myDecodedToken.username &&
-                    isMyTokenExpired === false && (
-                      <Nav.Link onClick={handleShow} style={itemColor}>
-                        Create Blog
-                      </Nav.Link>
-                    )}
-                  <Nav.Link href="/about" style={itemColor}>
+                  {auth.user && (
+                    <Nav.Link onClick={handleShow} style={itemColor}>
+                      Create Blog
+                    </Nav.Link>
+                  )}
+                  <Nav.Link
+                    onClick={() => navigate('/about')}
+                    style={itemColor}
+                  >
                     About Us
                   </Nav.Link>
-                  <Nav.Link href="/contact" style={itemColor}>
+                  <Nav.Link
+                    onClick={() => navigate('/contact')}
+                    style={itemColor}
+                  >
                     Contact
                   </Nav.Link>
-
-                  {mycookie &&
-                    myDecodedToken.username &&
-                    isMyTokenExpired === false && (
-                      <Nav.Link href="/profile" style={itemColor}>
-                        {myDecodedToken.username}
-                      </Nav.Link>
-                    )}
-                  {mycookie &&
-                  myDecodedToken.username &&
-                  isMyTokenExpired === false ? (
-                    <Nav.Link href="/signout" style={itemColor}>
+                  {auth.user && (
+                    <Nav.Link
+                      onClick={() => navigate('/profile')}
+                      style={itemColor}
+                    >
+                      {auth.user}
+                    </Nav.Link>
+                  )}
+                  {auth.user ? (
+                    <Nav.Link
+                      onClick={() => {
+                        auth.logout();
+                        navigate('/');
+                      }}
+                      style={itemColor}
+                    >
                       Sign Out
                     </Nav.Link>
                   ) : (
-                    <Nav.Link href="/signin" style={itemColor}>
+                    <Nav.Link
+                      onClick={() => navigate('/signin')}
+                      style={itemColor}
+                    >
                       Sign In
                     </Nav.Link>
                   )}

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { useAuth } from './AuthContext';
 
-const axios = require('axios').default;
 import background from '../../assets/images/login/login3.jpg';
 const signin = () => {
   const myStyle = {
@@ -32,33 +32,18 @@ const signin = () => {
   const [pwd, setPwd] = useState('');
   const [errMsg, setErrMsg] = useState('');
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     //console.log(user, pwd);
-    const data = {
-      username: user,
-      password: pwd,
-    };
-    await axios
-      .post('http://localhost:3001/api/v1/signin/', data, {
-        withCredentials: true,
-      })
-      .then(() => {
-        //console.log(response.data);
-
-        navigate('/');
-        window.location.reload();
-      })
-      .catch((error) => {
-        //console.log(error);
-        setErrMsg(error);
-      });
+    try {
+      auth.login(user, pwd);
+      navigate('/');
+    } catch (error) {
+      setErrMsg(error);
+    }
   };
-
-  useEffect(() => {
-    handleSubmit();
-  }, []);
 
   return (
     <>

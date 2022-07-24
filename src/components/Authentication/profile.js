@@ -4,9 +4,8 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { isExpired, decodeToken } from 'react-jwt';
 const axios = require('axios').default;
-import Cookies from 'js-cookie';
+import { useAuth } from './AuthContext';
 
 const profile = () => {
   const myStyle = {
@@ -41,13 +40,9 @@ const profile = () => {
     textAlign: 'center',
   };
 
-  const navigate = useNavigate();
-  //const token = localStorage.getItem('mytoken');
-  const mycookie = Cookies.get('macaron');
+  const auth = useAuth();
 
-  const myDecodedToken = decodeToken(mycookie);
-  const isMyTokenExpired = isExpired(mycookie);
-  const tokenUsername = myDecodedToken.username;
+  const navigate = useNavigate();
 
   const [show, setShow] = useState(false);
 
@@ -68,7 +63,7 @@ const profile = () => {
   // show the user profile data
   const getUserData = async () => {
     axios
-      .get('http://localhost:3001/api/v1/users/' + tokenUsername)
+      .get('http://localhost:3001/api/v1/users/' + auth.user)
       .then(function (response) {
         setUserData(response.data);
       })
@@ -86,12 +81,12 @@ const profile = () => {
       url: 'http://localhost:3001/api/v1/posts',
       data: {
         title: title,
-        username: tokenUsername,
+        username: auth.user,
         description: description,
       },
-      headers: {
-        Authorization: 'Bearer ' + mycookie,
-      },
+      // headers: {
+      //   Authorization: 'Bearer ' + mycookie,
+      // },
     })
       .then(function (response) {
         alert('Successfully blog created');
@@ -109,14 +104,14 @@ const profile = () => {
 
     await axios({
       method: 'put',
-      url: 'http://localhost:3001/api/v1/users/' + tokenUsername,
+      url: 'http://localhost:3001/api/v1/users/' + auth.user,
       data: {
         name: fullname,
         email: email,
       },
-      headers: {
-        Authorization: 'Bearer ' + mycookie,
-      },
+      // headers: {
+      //   Authorization: 'Bearer ' + mycookie,
+      // },
     })
       .then(function () {
         alert('Successfully User Info updated');
@@ -127,22 +122,19 @@ const profile = () => {
       });
   };
 
+  const handleSignout = () => {
+    auth.logout();
+    navigate('/');
+  };
+
   useEffect(() => {
     getUserData();
-  }, []);
-
-  useEffect(() => {
-    handleSubmit();
-  }, []);
-
-  useEffect(() => {
-    handleUpdateSubmit();
   }, []);
 
   return (
     <>
       <div style={myStyle}>
-        {mycookie && myDecodedToken.username && isMyTokenExpired === false ? (
+        {auth.user ? (
           <Card style={{ width: '35rem' }}>
             <Card.Body>
               <div style={userImg}>
@@ -165,6 +157,13 @@ const profile = () => {
               </Button>{' '}
               <Button style={{ float: 'right' }} variant="outline-danger">
                 Delete
+              </Button>{' '}
+              <Button
+                style={{ float: 'right' }}
+                onClick={handleSignout}
+                variant="outline-danger"
+              >
+                Sign Out
               </Button>{' '}
             </Card.Footer>
           </Card>
