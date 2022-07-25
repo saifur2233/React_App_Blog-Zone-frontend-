@@ -56,9 +56,9 @@ const allBlogs = () => {
     getData();
   }, []);
 
-  useEffect(() => {
-    searchAuthorBlogs();
-  }, []);
+  // useEffect(() => {
+  //   searchAuthorBlogs();
+  // }, []);
 
   return (
     <div style={backgroundColor}>
@@ -79,7 +79,7 @@ const allBlogs = () => {
                   value={searchAuthor}
                   required
                 />
-                <Button type="submit" variant="outline-primary">
+                <Button type="submit" variant="primary">
                   Search Author
                 </Button>
               </InputGroup>

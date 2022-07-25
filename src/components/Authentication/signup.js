@@ -44,8 +44,12 @@ const signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (pwd !== confirmPwd) {
+      return setErrMsg("Password don't match!");
+    }
     try {
-      auth.registration(fullname, username, email, pwd);
+      setErrMsg('');
+      await auth.registration(fullname, username, email, pwd);
       navigate('/');
     } catch (error) {
       setErrMsg(error);

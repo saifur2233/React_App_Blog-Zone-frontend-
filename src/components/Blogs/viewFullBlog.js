@@ -37,6 +37,11 @@ const viewFullBlog = () => {
   const [blogTitle, setBlogTitle] = useState('');
   const [blogDescription, setBlogDescription] = useState('');
 
+  const [deleteshow, setDeleteShow] = useState(false);
+
+  const handleDeleteClose = () => setDeleteShow(false);
+  const handleDeleteShow = () => setDeleteShow(true);
+
   const viewBlogData = async () => {
     await axios
       .get(`http://localhost:3001/api/v1/posts/search/${blogId}`)
@@ -61,16 +66,14 @@ const viewFullBlog = () => {
         username: auth.user,
         description: blogDescription,
       },
-      // headers: {
-      //   Authorization: 'Bearer ' + mycookie,
-      // },
+      withCredentials: true,
     })
       .then(function () {
         alert('Successfully Blog Info updated');
         setUpdateShow(false);
         const blogid = blogId;
         setUpdated(!updated);
-        navigate(`/viewblog/${blogid}`);
+        navigate(`/blog/${blogid}`);
       })
       .catch(function (error) {
         alert(error.message);
@@ -83,12 +86,9 @@ const viewFullBlog = () => {
     await axios({
       method: 'delete',
       url: 'http://localhost:3001/api/v1/posts/' + blogId,
-      // headers: {
-      //   Authorization: 'Bearer ' + mycookie,
-      // },
+      withCredentials: true,
     })
       .then(function () {
-        alert('Successfully blog deleted.');
         navigate('/blogs');
       })
       .catch(function (error) {
@@ -99,14 +99,6 @@ const viewFullBlog = () => {
   useEffect(() => {
     viewBlogData();
   }, [blogId, updated]);
-
-  useEffect(() => {
-    handleUpdateSubmit();
-  }, []);
-
-  useEffect(() => {
-    handleBlogDelete();
-  }, []);
 
   return (
     <div style={mainDiv}>
@@ -134,7 +126,7 @@ const viewFullBlog = () => {
             <Button
               variant="danger"
               style={{ float: 'right', marginRight: '5px' }}
-              onClick={handleBlogDelete}
+              onClick={handleDeleteShow}
             >
               Delete
             </Button>
@@ -183,6 +175,32 @@ const viewFullBlog = () => {
           </Modal.Body>
         </Modal>
       </div>
+      <div>
+        <Modal show={deleteshow} onHide={handleDeleteClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Do you want to Delete the blog?</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Button
+              style={{ float: 'right' }}
+              variant="success"
+              className="me-3"
+              onClick={handleDeleteClose}
+            >
+              No
+            </Button>
+            <Button
+              style={{ float: 'right' }}
+              variant="danger"
+              className="me-3"
+              onClick={handleBlogDelete}
+            >
+              Yes
+            </Button>
+          </Modal.Body>
+        </Modal>
+      </div>
+      <div id="modal"></div>
     </div>
   );
 };

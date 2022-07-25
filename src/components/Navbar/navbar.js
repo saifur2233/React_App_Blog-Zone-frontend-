@@ -35,22 +35,23 @@ const navbar = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    //console.log(title, auth.user, description);
     await axios({
       method: 'post',
-      url: 'http://localhost:3001/api/v1/posts',
+      url: 'http://localhost:3001/api/v1/posts/',
       data: {
         title: title,
         username: auth.user,
         description: description,
       },
-      // headers: {
-      //   Authorization: 'Bearer ' + mycookie,
-      // },
+      withCredentials: true,
     })
-      .then(function () {
+      .then(function (response) {
         alert('Successfully blog created');
-        navigate('/blogs');
         handleClose();
+        const blogid = response.data.id;
+        navigate(`/blog/${blogid}`);
+
         //window.location.reload();
       })
       .catch(function (error) {
@@ -119,6 +120,7 @@ const navbar = () => {
                   {auth.user ? (
                     <Nav.Link
                       onClick={() => {
+                        console.log('logout 1');
                         auth.logout();
                         navigate('/');
                       }}

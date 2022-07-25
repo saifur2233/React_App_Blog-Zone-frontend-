@@ -84,14 +84,13 @@ const profile = () => {
         username: auth.user,
         description: description,
       },
-      // headers: {
-      //   Authorization: 'Bearer ' + mycookie,
-      // },
+      withCredentials: true,
     })
       .then(function (response) {
         alert('Successfully blog created');
+        handleClose();
         const blogid = response.data.id;
-        navigate(`/viewblog/${blogid}`);
+        navigate(`/blog/${blogid}`);
       })
       .catch(function (error) {
         alert(error.message);
